@@ -7,14 +7,14 @@ from alifebook_lib.visualizers import ArrayVisualizer
 visualizer = ArrayVisualizer() #Visualizerの初期化
 
 SPACE_SIZE = 600
-RULE = 27 #CAのバイナリコーディングされたルール
+RULE = 30 #CAのバイナリコーディングされたルール
 #CAの状態空間
 state = np.zeros(SPACE_SIZE, dtype=np.int8) #最小サイズの箱を用意し、メモリの節約
 next_state = np.zeros(SPACE_SIZE, dtype=np.int8) #stateの次の世代がnext_state
 
 #最初の状態を初期化
 ###ランダム###
-# state[:] = np.random(2, size=len(state))
+state[:] = np.random.randint(2, size=len(state))
 ### 中央の1ピクセルのみ1, あとは0(最初の1マス) ###
 state[len(state)//2] = 1  
 while visualizer:  #ウィンドウが開いている限りずっと続く
