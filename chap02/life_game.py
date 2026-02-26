@@ -15,6 +15,8 @@ state = np.zeros((HEIGHT,WIDTH), dtype=np.int8)
 next_state = np.empty((HEIGHT,WIDTH), dtype=np.int8)
 
 #初期化
+pattern = game_of_life_patterns.GLIDER_GUN
+state[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 ###ランダム###
 state = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
 
