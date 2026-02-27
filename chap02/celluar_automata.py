@@ -7,7 +7,7 @@ from alifebook_lib.visualizers import ArrayVisualizer
 visualizer = ArrayVisualizer() #Visualizerの初期化
 
 SPACE_SIZE = 600
-RULE = 30 #CAのバイナリコーディングされたルール
+RULE = 110 #CAのバイナリコーディングされたルール
 #CAの状態空間
 state = np.zeros(SPACE_SIZE, dtype=np.int8) #最小サイズの箱を用意し、メモリの節約
 next_state = np.zeros(SPACE_SIZE, dtype=np.int8) #stateの次の世代がnext_state

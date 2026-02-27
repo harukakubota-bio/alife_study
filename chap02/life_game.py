@@ -17,7 +17,7 @@ next_state = np.empty((HEIGHT,WIDTH), dtype=np.int8)
 #初期化
 ###ランダム###
 #state = np.random.randint(2, size=(HEIGHT,WIDTH), dtype=np.int8)
-pattern = game_of_life_patterns.GLIDER_GUN
+pattern = game_of_life_patterns.GLIDER
 state[2:2+pattern.shape[0], 2:2+pattern.shape[1]] = pattern
 
 while visualizer:
