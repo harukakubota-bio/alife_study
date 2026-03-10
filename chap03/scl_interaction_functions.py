@@ -6,6 +6,8 @@ def production(particles, x, y, probability):
     n0_x, n0_y, n1_x, n1_y = get_random_2_moore_neighborhood(x, y, particles.shape[0])
     n0_p = particles[n0_x, n0_y]
     n1_p = particles[n1_x, n1_y]
+    #この直下のif節では書かれている3つの条件のうち一つでも当てはまってしまったら、関数を返すガード節と呼ばれるもの
+    #結局このif節を通り抜けられるのは「自分が触媒かつ、選んだ二人の隣人が基質であるもの」のみ
     if p['type'] != 'CATALYST' or n0_p['type'] != 'SUBSTRATE' or n1_p['type'] != 'SUBSTRATE':
         return
     if evaluate_probability(probability):
@@ -16,6 +18,7 @@ def production(particles, x, y, probability):
 def disintegration(particles, x, y, probability):
     p = particles[x,y]
     # disintegrationはすぐに起こらない場合もあるので、一旦フラグを立てる
+    #元の材料である2つのsubstanceに戻るためには自分がいるマスに加えてもう一つ空きます(HOLE)が必要
     if p['type'] in ('LINK', 'LINK_SUBSTRATE') and evaluate_probability(probability):
         p['disintegrating_flag'] = True
 

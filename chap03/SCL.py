@@ -93,6 +93,7 @@ while visualizer:
         for y in range(SPACE_SIZE):
              production(particles, x, y, PRODUCTION_PROBABILITY)
              disintegration(particles, x, y, DISINTEGRATION_PROBABILITY)
+             #bondingだけは、分子の状態に応じて確率を変えるために3つの確率を与える
              bonding(particles, x, y, BONDING_CHAIN_INITIATE_PROBABILITY,
                                       BONDING_CHAIN_SPLICE_PROBABILITY,
                                       BONDING_CHAIN_EXTEND_PROBABILITY)
