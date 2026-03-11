@@ -52,8 +52,9 @@ def bonding(particles, x, y,
         return
     if (n_x, n_y) in p['bonds']:
         return
-    if len(p['bonds']) >= 2 or len(n_p['bonds']) >= 2:
+    if len(p['bonds']) >= 2 or len(n_p['bonds']) >= 2: #どちらかがすでに2つの結合をもっている場合
         return
+    #線が交差したり、鋭角になったりしないかのチェック
     an0_x, an0_y, an1_x, an1_y = get_adjacent_moore_neighborhood(x, y, n_x, n_y, particles.shape[0])
     if (an0_x, an0_y) in p['bonds'] or (an1_x, an1_y) in p['bonds']:
         return
@@ -64,11 +65,11 @@ def bonding(particles, x, y,
     if (an0_x, an0_y) in particles[an1_x,an1_y]['bonds']:
         return
     # Bondingは以下の２つの場合には起こらない
-    # 1) moore近傍に膜のチェーンが存在する場合 (chain_inhibit_bond_flag)
-    # 2) moore近傍に触媒分子が存在する場合 (catalyst_inhibit_bond_flag)
+    # 1) moore近傍に膜のチェーンが存在する場合 (chain_inhibit_bond_flag)(膜同士がくっつき塊になってしまうのを防ぐ)
+    # 2) moore近傍に触媒分子が存在する場合 (catalyst_inhibit_bond_flag)(触媒に膜がぴったりついてしまうと身動きが取れず死んでしまう)
     mn_list = get_moore_neighborhood(x, y, particles.shape[0]) + get_moore_neighborhood(n_x, n_y, particles.shape[0])
     if catalyst_inhibit_bond_flag:
-        for mn_x, mn_y in mn_list:
+        for mn_x, mn_y in mn_list: #mn_listには2つ上で取り出した(7,8)(8,9)のような座標が入っており、ここではその座標を取り出している(x座標がmn_xに、y座標がmn_yに)
             if particles[mn_x,mn_y]['type'] is 'CATALYST':
                 return
     if chain_inhibit_bond_flag:
@@ -78,21 +79,21 @@ def bonding(particles, x, y,
                     return
     # Bonding
     if len(p['bonds'])==0 and len(n_p['bonds'])==0:
-        prob = chain_initiate_probability
+        prob = chain_initiate_probability #両方フリーなら新規作成
     elif len(p['bonds'])==1 and len(n_p['bonds'])==1:
-        prob = chain_splice_probability
+        prob = chain_splice_probability #両方片手空きなら結合(またはループの完成)
     else:
-        prob = chain_extend_probability
-    if evaluate_probability(prob):
+        prob = chain_extend_probability #そうでないなら延長
+    if evaluate_probability(prob): #それぞれの確率であたりが出れば、つないでいる相手の座標リストにお互いの座標を加える
         p['bonds'].append((n_x, n_y))
         n_p['bonds'].append((x, y))
 
 
 def bond_decay(particles, x, y, probability):
     p = particles[x,y]
-    if p['type'] in ('LINK', 'LINK_SUBSTRATE') and evaluate_probability(probability):
-        for b in p['bonds']:
-            particles[b[0], b[1]]['bonds'].remove((x, y))
+    if p['type'] in ('LINK', 'LINK_SUBSTRATE') and evaluate_probability(probability): #p[〇]という表記はpにある〇というものへのアクセスをする
+        for b in p['bonds']: #bは座標として取り出される。(例：(7,8)であればb[0]は7,b[1]は8となる)
+            particles[b[0], b[1]]['bonds'].remove((x, y))  #取り出した座標にアクセスし、そこの座標のbondsという引き出しを開ける
         p['bonds'] = []
 
 
@@ -101,6 +102,8 @@ def absorption(particles, x, y, probability):
     # 対象の近傍粒子をランダムに選ぶ
     n_x, n_y = get_random_moore_neighborhood(x, y, particles.shape[0])
     n_p = particles[n_x, n_y]
+    #以下の条件を通り抜けられるのはpがLINKであり、かつn_pがSUBSTRATEの場合のみ
+    #ここを==とandで記述するとif文の中にif文が入る形となり、何度もインテンドを繰り返さねばならず読みにくくなってしまう
     if p['type'] != 'LINK' or n_p['type'] != 'SUBSTRATE':
         return
     if evaluate_probability(probability):
